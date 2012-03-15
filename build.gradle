@@ -1,0 +1,26 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	testCompile 'org.hamcrest:hamcrest-all:1.1'
+	testCompile 'junit:junit-dep:4.10'
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+tasks.withType(AbstractCompile).each {
+	it.options.encoding = "UTF-8"
+}
+
+eclipse {
+	classpath {
+		containers = [
+			'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7'
+		]
+	}
+}
