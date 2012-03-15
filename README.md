@@ -9,7 +9,8 @@ sleep使う方が簡単な分、イマイチな事になってしもうた…。
 
 凡そ正しい実装はこれかね。  
 
-* (RetryingFutureTask.java)[https://github.com/twitter/commons/blob/master/src/java/com/twitter/common/util/concurrent/RetryingFutureTask.java]
+* [RetryingFutureTask.java](https://github.com/twitter/commons/blob/master/src/java/com/twitter/common/util/concurrent/RetryingFutureTask.java)
+
 
 
 ## Requirements
