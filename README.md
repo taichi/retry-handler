@@ -7,6 +7,11 @@ JDKに入ってない別な名前にするべき。
 Futureの扱いがテキトー過ぎて、ちゃんと途中キャンセルできねぇので、  
 sleep使う方が簡単な分、イマイチな事になってしもうた…。
 
+凡そ正しい実装はこれかね。  
+
+* (RetryingFutureTask.java)[https://github.com/twitter/commons/blob/master/src/java/com/twitter/common/util/concurrent/RetryingFutureTask.java]
+
+
 ## Requirements
 * java7 tested by 1.7.0_02
 * gradle 1.0-milestone-7 (for development)
