@@ -143,6 +143,17 @@ public class ProcTest {
 		assertThat(endTime - startTime, greaterThanOrEqualTo(10 * 1000L));
 	}
 
+	@Test(expected = RetryException.class)
+	public void 指定した回数以内で正常終了出来なかったらRetryException() throws Exception {
+		Proc.retry(2, new Command<IOException>() {
+			@Override
+			public void execute() throws IOException {
+				throw new IOException();
+			}
+		}, 20);
+		fail();
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void timesに1以下を指定していたらIllegalArgumentExceptionを発生させる()
 			throws Throwable {

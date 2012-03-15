@@ -1,11 +1,11 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author taichi
@@ -37,37 +37,35 @@ public class Proc {
 			throw new IllegalArgumentException();
 		}
 		final Class<?> type = e.getClass().getComponentType();
-		final ConcurrentLinkedQueue<Future<Void>> list = new ConcurrentLinkedQueue<>();
-		final AtomicInteger counter = new AtomicInteger();
-		final Callable<Void>[] r = new Callable[1];
-		r[0] = new Callable<Void>() {
+		final Callable<Void> c = new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				if (counter.incrementAndGet() <= times) {
-					try {
-						command.execute();
-					} catch (Throwable t) {
-						// more error handling ?
-						if (type.isAssignableFrom(t.getClass())) {
-							list.add(scheduler.schedule(r[0], wait,
-									TimeUnit.MILLISECONDS));
-						} else {
-							throw (E) t;
-						}
-					}
-				}
+				command.execute();
 				return null;
 			}
 		};
-		list.add(scheduler.schedule(r[0], 0, TimeUnit.MILLISECONDS));
-		try {
-			while (0 < list.size()) {
-				Future<Void> f = list.poll();
+
+		List<Throwable> throwables = new ArrayList<Throwable>();
+		for (int i = 0; i < times; i++) {
+			try {
+				Future<?> f = scheduler.schedule(c, i == 0 ? 0L : wait,
+						TimeUnit.MILLISECONDS);
 				f.get();
+				return;
+			} catch (InterruptedException ex) {
+				throw new InterruptedRuntimeException(ex);
+			} catch (ExecutionException ex) {
+				Throwable t = ex.getCause();
+				throwables.add(t);
+				if (type.isAssignableFrom(t.getClass()) == false) {
+					throw (E) t;
+				}
 			}
-		} catch (InterruptedException ex) {
-		} catch (ExecutionException ex) {
-			throw (E) ex.getCause();
 		}
+		throw new RetryException(throwables);
+	}
+
+	public static List<Runnable> shutdown() {
+		return scheduler.shutdownNow();
 	}
 }
