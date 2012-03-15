@@ -2,6 +2,7 @@
 
 後、Runnableって自前インターフェースはいくら何でも酷いと思う。  
 JDKに入ってない別な名前にするべき。  
+加えて言うなら、Gradle可愛いよ、Gradle。
 
 ## Requirements
 * java7 tested by 1.7.0_02
